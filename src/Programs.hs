@@ -115,5 +115,12 @@ atLeast42 =
   , Done
   ]
 
+assertTest :: [Instr]
+assertTest =
+  [ Read
+  , Assert (SLt (SCon 10) (SAny (-1)))
+  , Done
+  ]
+
 listToProgram :: [Instr] -> Prog
 listToProgram = fromList

@@ -97,7 +97,7 @@ step _ Over = error "Over expects one argument."
 step (pc, mem, w:stack) RotL =
   return (pc+1, mem, stack <> [w])
 step _ RotL = error "RotL expects one argument."
-step (pc, mem, v:stack) (Assert predicate) = do
+step (pc, mem, stack@(v:_)) (Assert predicate) = do
   if (wordToBool (interpretSym predicate v))
     then (putStrLn $ "assertion holds: " <> renderSym predicate)
     else (putStrLn $ "assertion failed: " <> renderSym predicate)

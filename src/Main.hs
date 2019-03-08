@@ -15,11 +15,12 @@ main :: IO ()
 main = do
   args <- getArgs
   let trace = elem "-t" args
-  let prog = listToProgram atLeast42
+  let prog = listToProgram assertTest
   putStrLn $ show prog
-  stack <- return [] -- run trace prog (0, M.empty, [])
+  -- stack <- run trace prog (0, M.empty, [])
+  stack <- return []
   putStrLn $ show $ wordToSignedInt <$> stack
-  let traces = symRun 50 prog defaultSymState
+  traces <- symRun 50 prog defaultSymState
   putStrLn $ fromString $ T.drawTree $ fmap (toList . show . \(pc,_,_,st,cs) -> (pc, renderSym <$> st, renderSym <$> cs)) traces
-  solvedTraces <- solveSym traces
-  putStrLn $ fromString $ T.drawTree $ fmap (toList . renderSolvedState) solvedTraces
+  -- solvedTraces <- solveSym traces
+  -- putStrLn $ fromString $ T.drawTree $ fmap (toList . renderSolvedState) solvedTraces
