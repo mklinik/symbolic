@@ -98,5 +98,22 @@ loop = [ Push 0
        , Done
        ]
 
+-- make the input at least 42
+atLeast42 :: [Instr]
+atLeast42 =
+  [ Read
+  , Dup
+  , Push 42
+  , Swap
+  , Lt
+  , Push 9 -- Address of then branch
+  , Swap
+  , JmpIf
+  , Done -- else: do nothing
+  , Push (42) -- then: number is less than zero
+  , Add
+  , Done
+  ]
+
 listToProgram :: [Instr] -> Prog
 listToProgram = fromList

@@ -15,7 +15,7 @@ main :: IO ()
 main = do
   args <- getArgs
   let trace = elem "-t" args
-  let prog = listToProgram addInputsPrintOver15
+  let prog = listToProgram atLeast42
   putStrLn $ show prog
   stack <- return [] -- run trace prog (0, M.empty, [])
   putStrLn $ show $ wordToSignedInt <$> stack
