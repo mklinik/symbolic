@@ -97,6 +97,15 @@ renderSMTResult s@(S.Satisfiable _ _) =
     if M.null dict then "Trivial" else renderDict dict
 renderSMTResult _ = "Error"
 
+
+renderSMTResultAssertion :: S.SMTResult -> String
+renderSMTResultAssertion (S.Unsatisfiable _) = "Assertion satisfied"
+renderSMTResultAssertion s@(S.Satisfiable _ _) =
+  let dict = M.mapKeys fromList $ S.getModelDictionary s
+  in
+    if M.null dict then "Assertion invalid" else "Counterexample found: " <> renderDict dict
+renderSMTResultAssertion _ = "Error"
+
 renderSolvedState :: SolvedState -> String
 renderSolvedState (SolvedState (pc,_,_,st,cs) c) =
   "PC: " <> show pc <> "\n" <>

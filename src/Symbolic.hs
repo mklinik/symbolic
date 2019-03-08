@@ -75,11 +75,22 @@ symStep (pc, i, mem, _:stack, cs) Load =
   return $ pure (pc+1, i+1, mem, SAny i: stack, cs)
 symStep _ Load = error "Store expects two arguments."
 symStep (pc, i, mem, stack@(v:_), cs) (Assert predicate) = do
+  -- PC are the path constraints
+  -- A is the assertion
+  -- We want to prove that PC implies A
+  -- PC => A        iff
+  -- not PC or A    iff
+  -- PC and not A
+  -- In other words, if there are values that satisfy PC but not A, the
+  -- assertion is not valid in general. We have found a counterexample!
+  -- If there are no such values, then the predicate is not satisfiable, and we are happy
   let assertion = makeAssertion predicate v
-  putStrLn $ "checking assertion " <> renderSym assertion
-  let smtExpr = toSMT $ assertion : cs
-  S.SatResult smtRes <- S.satWith S.z3 smtExpr
-  putStrLn $ renderSMTResult smtRes
+  putStrLn $ "checking assertion: " <> renderSym assertion
+  putStrLn $ "in path: " <> show (renderSym <$> cs)
+  putStrLn $ "pc: " <> show pc
+  let smtExpr = toSMT (SNot assertion : cs)
+  S.SatResult smtRes <- S.satWith (S.z3{S.verbose=False}) smtExpr
+  putStrLn $ renderSMTResultAssertion smtRes
   return $ pure (pc+1, i+1, mem, stack, cs)
 symStep _ (Assert _) =
   error "Assert expects one argument."
