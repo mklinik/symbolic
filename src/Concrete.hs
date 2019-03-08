@@ -98,3 +98,6 @@ step (pc, mem, w:stack) RotL =
 step _ RotL = error "RotL expects one argument."
 step _ Done =
   error "No state transition for Done!!"
+
+defaultState :: State
+defaultState = (0, M.empty, [])
