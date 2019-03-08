@@ -76,9 +76,10 @@ symStep (pc, i, mem, _:stack, cs) Load =
 symStep _ Load = error "Store expects two arguments."
 symStep (pc, i, mem, stack@(v:_), cs) (Assert predicate) = do
   let assertion = makeAssertion predicate v
-  -- let assertion = toSMT [makeAssertion predicate v]
-  -- putStrLn $ "checking assertion "
-  -- S.SatResult smtRes <- S.satWith S.z3 assertion
+  putStrLn $ "checking assertion " <> renderSym assertion
+  let smtExpr = toSMT $ assertion : cs
+  S.SatResult smtRes <- S.satWith S.z3 smtExpr
+  putStrLn $ renderSMTResult smtRes
   return $ pure (pc+1, i+1, mem, stack, cs)
 symStep _ (Assert _) =
   error "Assert expects one argument."
