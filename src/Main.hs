@@ -15,7 +15,7 @@ main :: IO ()
 main = do
   args <- getArgs
   let trace = elem "-t" args
-  let prog = listToProgram assertTest
+  let prog = listToProgram atLeast42
   putStrLn $ show prog
   -- stack <- run trace prog (0, M.empty, [])
   stack <- return []

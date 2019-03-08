@@ -110,8 +110,9 @@ atLeast42 =
   , Swap
   , JmpIf
   , Done -- else: do nothing
-  , Push (42) -- then: number is less than zero
+  , Push (42) -- then: number is less than 42
   , Add
+  , Assert (SLt (SCon 41) (SAny (-1))) -- assert( x > 41 )
   , Done
   ]
 
@@ -119,6 +120,43 @@ assertTest :: [Instr]
 assertTest =
   [ Read
   , Assert (SLt (SCon 10) (SAny (-1)))
+  , Done
+  ]
+
+assertTest2 :: [Instr]
+assertTest2 =
+  [ Read
+  , Dup
+  , Push 10
+  , Swap
+  , Lt
+  , Push 9 -- address of then
+  , Swap
+  , JmpIf
+  , Done
+  , Assert (SLt (SAny (-1)) (SCon 9)) -- assert( x < 9 ), which is false
+  , Done
+  ]
+
+-- Path says v_0 < 12 and v_0 > 10
+-- Assertion says v0 == 11
+assertTest3 :: [Instr]
+assertTest3 =
+  [ Read
+  , Dup
+  , Dup
+  , Push 10
+  , Lt
+  , Swap
+  , Push 12
+  , Swap
+  , Lt
+  , And
+  , Push 14 -- address of then
+  , Swap
+  , JmpIf
+  , Done
+  , Assert (SEq (SAny (-1)) (SCon 11)) -- assert( x == 11 )
   , Done
   ]
 
