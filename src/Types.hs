@@ -22,6 +22,7 @@ data Instr = Add
            | Dup
            | Over
            | RotL
+           | Assert Sym -- assert that the topmost stack value satisfies Sym, where Sym can refer to this value as (SAny (-1))
            | Done deriving (Eq, Show)
 
 -- | A program is a list of instructions.

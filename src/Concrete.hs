@@ -10,6 +10,7 @@ import System.IO (hFlush, stdout)
 
 import Types
 import Util
+import Symbolic
 
 run :: Bool -> Prog -> State-> IO [Word32]
 run trace prg st@(pc, _, stack) =
@@ -96,8 +97,28 @@ step _ Over = error "Over expects one argument."
 step (pc, mem, w:stack) RotL =
   return (pc+1, mem, stack <> [w])
 step _ RotL = error "RotL expects one argument."
+step (pc, mem, v:stack) (Assert predicate) = do
+  if (wordToBool (interpretSym predicate v))
+    then (putStrLn $ "assertion holds: " <> renderSym predicate)
+    else (putStrLn $ "assertion failed: " <> renderSym predicate)
+  return (pc+1, mem, stack)
+step _ (Assert _) =
+  error "Assert expects one argument"
 step _ Done =
   error "No state transition for Done!!"
 
 defaultState :: State
 defaultState = (0, M.empty, [])
+
+interpretSym :: Sym -> Word32 -> Word32
+interpretSym (SAdd l r)  x = (interpretSym l x) + (interpretSym r x)
+interpretSym (SCon w)    _ = w
+interpretSym (SAny (-1)) x = x
+interpretSym (SAny n)    _ = error $ "interpretSym: unknown identifier " <> show n
+interpretSym (SEq l r)   x = boolToWord $ (interpretSym l x) == (interpretSym r x)
+interpretSym (SNot c)    x = boolToWord $ not $ wordToBool (interpretSym c x)
+interpretSym (SAnd l r)  x = boolToWord $
+  (wordToBool $ interpretSym l x) && (wordToBool $ interpretSym r x)
+interpretSym (SOr l r)   x = boolToWord $
+  (wordToBool $ interpretSym l x) || (wordToBool $ interpretSym r x)
+interpretSym (SLt l r)   x = boolToWord $ (interpretSym l x) < (interpretSym r x)
