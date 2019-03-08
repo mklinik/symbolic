@@ -12,7 +12,6 @@ import qualified Data.SBV.Dynamic as S
 
 import Types
 import Util
-import Symbolic
 
 type SValMap = M.Map Int (S.Symbolic S.SVal)
 

@@ -76,13 +76,3 @@ symStep _ Done = error "No step for Done"
 
 defaultSymState :: SymState
 defaultSymState = (0, 0, M.empty, [], [])
-
-renderSym :: Sym -> String
-renderSym (SAdd l r) = "(" <> renderSym l <> " + " <> renderSym r <> ")"
-renderSym (SCon w) = show (wordToSignedInt w)
-renderSym (SAny i) = valName i
-renderSym (SEq l r) = renderSym l <> " = " <> renderSym r
-renderSym (SNot c) = "~(" <> renderSym c <> ")"
-renderSym (SAnd l r) = renderSym l <> " and " <> renderSym r
-renderSym (SOr l r) = renderSym l <> " or " <> renderSym r
-renderSym (SLt l r) = renderSym l <> " < " <> renderSym r

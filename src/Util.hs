@@ -4,6 +4,8 @@ import Foundation
 
 import qualified Data.Bits as B
 
+import Types
+
 wordToInt :: Word32 -> Int
 wordToInt = fromIntegral . toInteger
 
@@ -30,3 +32,13 @@ isNegative w = B.testBit w 31
 
 valName :: Int -> String
 valName i = "val_" <> (show i)
+
+renderSym :: Sym -> String
+renderSym (SAdd l r) = "(" <> renderSym l <> " + " <> renderSym r <> ")"
+renderSym (SCon w) = show (wordToSignedInt w)
+renderSym (SAny i) = valName i
+renderSym (SEq l r) = renderSym l <> " = " <> renderSym r
+renderSym (SNot c) = "~(" <> renderSym c <> ")"
+renderSym (SAnd l r) = renderSym l <> " and " <> renderSym r
+renderSym (SOr l r) = renderSym l <> " or " <> renderSym r
+renderSym (SLt l r) = renderSym l <> " < " <> renderSym r
